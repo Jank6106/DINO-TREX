@@ -1,0 +1,111 @@
+# depslib dependency file v1.0
+1743246911 source:d:\learn_sdl2\dino_trex_game\main.cpp
+	<iostream>
+	<vector>
+	<fstream>
+	"LTexture.h"
+	"CommonFunc.h"
+	"Background.h"
+	"Character.h"
+	"Obstacle.h"
+	"Utils.h"
+
+1743246919 source:d:\learn_sdl2\dino_trex_game\commonfunc.cpp
+	"LTexture.h"
+	"CommonFunc.h"
+	"Background.h"
+
+1743209991 d:\learn_sdl2\dino_trex_game\commonfunc.h
+	<windows.h>
+	<SDL.h>
+	<SDL_image.h>
+	<SDL_mixer.h>
+	<SDL_ttf.h>
+	<string>
+	<iostream>
+
+1738957627 d:\sdl2\sdl2_image-2.8.5\x86_64-w64-mingw32\include\sdl2\sdl_image.h
+	"SDL.h"
+	"SDL_version.h"
+	"begin_code.h"
+	"close_code.h"
+
+1742396700 d:\learn_sdl2\dino_trex_game\baseobject.h
+	"CommonFunc.h"
+	"LTexture.h"
+
+1743177167 source:d:\learn_sdl2\dino_trex_game\ltexture.cpp
+	"LTexture.h"
+	<iostream>
+
+1742917426 d:\learn_sdl2\dino_trex_game\ltexture.h
+	<SDL.h>
+	<SDL_image.h>
+	<string>
+
+1742494946 source:d:\learn_sdl2\dino_trex_game\baseobject.cpp
+
+1743169551 source:d:\learn_sdl2\dino_trex_game\background.cpp
+	"LTexture.h"
+	"CommonFunc.h"
+	"Background.h"
+
+1743032804 d:\learn_sdl2\dino_trex_game\background.h
+	<SDL.h>
+	<string>
+	"LTexture.h"
+	<iostream>
+
+1743241964 d:\learn_sdl2\dino_trex_game\character.h
+	"CommonFunc.h"
+	"LTexture.h"
+	"CommonFunc.h"
+	"Background.h"
+
+1743241907 source:d:\learn_sdl2\dino_trex_game\character.cpp
+	"Character.h"
+	"LTexture.h"
+	"CommonFunc.h"
+	"Background.h"
+	"Obstacle.h"
+
+1743248735 source:d:\learn_sdl2\dino_trex_game\obstacle.cpp
+	"Obstacle.h"
+	"CommonFunc.h"
+	"LTexture.h"
+	"Character.h"
+	"Background.h"
+	<cstdlib>
+	<ctime>
+	<iostream>
+	<algorithm>
+
+1743246911 d:\learn_sdl2\dino_trex_game\obstacle.h
+	"CommonFunc.h"
+	"LTexture.h"
+	"CommonFunc.h"
+	"Background.h"
+	"Character.h"
+	<vector>
+
+1743211144 d:\learn_sdl2\dino_trex_game\utils.h
+	<SDL.h>
+	<SDL_mixer.h>
+	<SDL_ttf.h>
+	<string>
+	"LTexture.h"
+	"CommonFunc.h"
+	"Background.h"
+	"Character.h"
+	"Obstacle.h"
+
+1743274869 source:d:\learn_sdl2\dino_trex_game\utils.cpp
+	"LTexture.h"
+	"CommonFunc.h"
+	"Background.h"
+	"Character.h"
+	"Obstacle.h"
+	"Utils.h"
+	<fstream>
+	<iostream>
+
