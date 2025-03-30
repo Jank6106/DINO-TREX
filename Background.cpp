@@ -2,23 +2,19 @@
 #include "CommonFunc.h"
 #include "Background.h"
 
-const int LAYER_COUNT = 7;
+const int LAYER_COUNT = 5;
 SDL_Texture* Layers[LAYER_COUNT];
 double bgX1[LAYER_COUNT], bgX2[LAYER_COUNT];
 
-const double Layer_speed[LAYER_COUNT] = {0.5, 0.7, 0.9, 1.0, 1.0, 15, 15};
-const double Layer_cut[LAYER_COUNT] = {0, 0, 0, 0, 0, 0, 0};
+const double Layer_speed[LAYER_COUNT] = {0.5, 0.7, 0.9, 1.0, 15};
+const double Layer_cut[LAYER_COUNT] = {0, 0, 0, 0, 0};
 const char* Layer_path[LAYER_COUNT] = {
     "imgs/Background/Hill_1.png",
     "imgs/Background/Bush_1.png",
     "imgs/Background/Bush_2.png",
     "imgs/Background/Bush_3.png",
-    "imgs/Background/Bush_4.png",
     "imgs/Background/Land_1.png",
-    "imgs/Background/Land_2.png"
 };
-// {0.2, 0.4, 0.6, 0.7, 0.7, 0.9, 0.9}
-// {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
 void initBackgrounds() {
     for (int i = 0; i < LAYER_COUNT; i++) {

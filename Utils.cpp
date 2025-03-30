@@ -125,7 +125,7 @@ bool loadTextures() {
     homeButtonTexture = LoadTexture("imgs/Buttons/HomeButton.jpg", renderer);
     pauseHomeButtonTexture = LoadTexture("imgs/Buttons/HomeButton.jpg", renderer);
     gameOverImage = LoadTexture("imgs/Buttons/GameOver.png", renderer);
-    mainScreenTexture = LoadTexture("imgs/Background/mainScreen.png", renderer);
+    mainScreenTexture = LoadTexture("imgs/Background/mainWindow.png", renderer);
     playButtonTexture = LoadTexture("imgs/Buttons/PlayButton.png", renderer);
 
     if (!pauseButtonTexture || !continueButtonTexture || !replayButtonTexture ||

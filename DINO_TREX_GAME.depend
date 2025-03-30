@@ -45,7 +45,7 @@
 
 1742494946 source:d:\learn_sdl2\dino_trex_game\baseobject.cpp
 
-1743169551 source:d:\learn_sdl2\dino_trex_game\background.cpp
+1743315873 source:d:\learn_sdl2\dino_trex_game\background.cpp
 	"LTexture.h"
 	"CommonFunc.h"
 	"Background.h"
@@ -99,7 +99,7 @@
 	"Character.h"
 	"Obstacle.h"
 
-1743274869 source:d:\learn_sdl2\dino_trex_game\utils.cpp
+1743318685 source:d:\learn_sdl2\dino_trex_game\utils.cpp
 	"LTexture.h"
 	"CommonFunc.h"
 	"Background.h"
