@@ -6,7 +6,7 @@ const int LAYER_COUNT = 5;
 SDL_Texture* Layers[LAYER_COUNT];
 double bgX1[LAYER_COUNT], bgX2[LAYER_COUNT];
 
-const double Layer_speed[LAYER_COUNT] = {0.5, 0.7, 0.9, 1.0, 15};
+const double Layer_speed[LAYER_COUNT] = {0.5, 0.9, 1.3, 1.6, 0}; // Giá trị cho Land_1 không quan trọng vì sẽ bị ghi đè
 const double Layer_cut[LAYER_COUNT] = {0, 0, 0, 0, 0};
 const char* Layer_path[LAYER_COUNT] = {
     "imgs/Background/Hill_1.png",
@@ -27,10 +27,11 @@ void initBackgrounds() {
     }
 }
 
-void updateBackground() {
+void updateBackground(int obstacleSpeed) {
     for (int i = 0; i < LAYER_COUNT; i++) {
-        bgX1[i] -= Layer_speed[i];
-        bgX2[i] -= Layer_speed[i];
+        double speed = (i == 4) ? obstacleSpeed : Layer_speed[i]; // Layer 4 là Land_1
+        bgX1[i] -= speed;
+        bgX2[i] -= speed;
 
         if (bgX1[i] <= -SCREEN_WIDTH) bgX1[i] = bgX2[i] + SCREEN_WIDTH;
         if (bgX2[i] <= -SCREEN_WIDTH) bgX2[i] = bgX1[i] + SCREEN_WIDTH;
@@ -55,4 +56,3 @@ void closeBackgrounds() {
         Layers[i] = nullptr;
     }
 }
-

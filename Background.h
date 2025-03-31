@@ -9,7 +9,7 @@
 using namespace std;
 
 void initBackgrounds();
-void updateBackground();
+void updateBackground(int obstacleSpeech);
 void renderBackground();
 void closeBackgrounds();
 

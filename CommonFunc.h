@@ -14,6 +14,7 @@ using namespace std;
 extern SDL_Window* window;
 extern SDL_Renderer* renderer;
 extern bool isPaused;
+extern bool isGameOver;
 
 const char WINDOW_TITLE[] = "DINO T-REX GAME";
 

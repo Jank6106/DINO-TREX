@@ -5,10 +5,6 @@
 #include "Obstacle.h"
 #include "Utils.h"
 
-#include <fstream>
-#include <iostream>
-
-// Initialize variables
 Mix_Chunk* menuSound = nullptr;
 Mix_Chunk* gameSound = nullptr;
 Mix_Chunk* jumpSound = nullptr;
@@ -20,30 +16,33 @@ TTF_Font* font = nullptr;
 SDL_Color textColor = {128, 0, 32, 255};
 SDL_Color goldColor = {255, 215, 0, 255};
 
-SDL_Texture* pauseButtonTexture = nullptr;
-SDL_Texture* continueButtonTexture = nullptr;
-SDL_Texture* replayButtonTexture = nullptr;
-SDL_Texture* exitButtonTexture = nullptr;
-SDL_Texture* homeButtonTexture = nullptr;
-SDL_Texture* pauseHomeButtonTexture = nullptr;
-SDL_Texture* gameOverImage = nullptr;
 SDL_Texture* mainScreenTexture = nullptr;
-SDL_Texture* playButtonTexture = nullptr;
+SDL_Texture* instructionTexture = nullptr;
+SDL_Texture* pauseButtonTexture = nullptr;
+SDL_Texture* pauseScreenTexture = nullptr;
+SDL_Texture* gameOverTexture = nullptr;
+SDL_Texture* endScreenTexture = nullptr;
+SDL_Texture* settingsTexture = nullptr; // Thêm texture cho Settings
 
-const SDL_Rect pauseButtonRect = {SCREEN_WIDTH - 55, 5, 50, 50};
-const SDL_Rect continueButtonRect = {SCREEN_WIDTH/2 - 200, SCREEN_HEIGHT/2 - 50, 300, 150};
-const SDL_Rect replayButtonRect = {SCREEN_WIDTH/2 - 100 + 60, SCREEN_HEIGHT/2 + 70, 200, 100};
-const SDL_Rect exitButtonRect = {SCREEN_WIDTH/2 - 100 - 50 - 100, SCREEN_HEIGHT/2 + 80, 200, 80};
-const SDL_Rect homeButtonRect = {SCREEN_WIDTH/2 + 80 + 90, SCREEN_HEIGHT/2 + 75, 80, 80};
-const SDL_Rect pauseHomeButtonRect = {SCREEN_WIDTH/2 + 70, SCREEN_HEIGHT/2 - 37, 78, 78};
-const SDL_Rect gameOverRect = {SCREEN_WIDTH/2 - 500, SCREEN_HEIGHT/2 - 350, 1000, 500};
-const SDL_Rect playButtonRect = {SCREEN_WIDTH/2 - 150, SCREEN_HEIGHT/2 + 100, 300, 100};
+int volume = 70; // Âm lượng mặc định là 70
 
-// Sound functions
+const SDL_Rect startButtonRect = {620, 230, 240, 70};
+const SDL_Rect helpButtonRect = {620, 480, 240, 70};
+const SDL_Rect exitButtonRect = {620, 400, 240, 70};
+const SDL_Rect OptionsRect = {620, 315, 240, 70};
+const SDL_Rect pauseButtonRect = {SCREEN_WIDTH - 50, 10, 40, 40};
+const SDL_Rect continueButtonRect = {320, 186, 356, 90};
+const SDL_Rect homeButtonRect = {320, 320, 356, 90};
+const SDL_Rect gameOverRect = {SCREEN_WIDTH/2 - 500, SCREEN_HEIGHT/2 - 480, 1000, 700};
+const SDL_Rect endScreenRect = {SCREEN_WIDTH/2 - 250, SCREEN_HEIGHT - 180, 500, 72};
+const SDL_Rect replayButtonRect = {256, 413, 229, 58};
+const SDL_Rect gameOverHomeButtonRect = {515, 413, 229, 58};
+const SDL_Rect backButtonRect = {0, 0, 70, 70};  // Nút back
+const SDL_Rect decreaseButtonRect = {172, 293, 131, 100}; // Nút giảm âm lượng
+const SDL_Rect increaseButtonRect = {709, 293, 131, 100}; // Nút tăng âm lượng
+
 void playSoundEffect(Mix_Chunk* sound, int loops) {
-    if (sound) {
-        Mix_PlayChannel(-1, sound, loops);
-    }
+    if (sound) Mix_PlayChannel(-1, sound, loops);
 }
 
 void stopCurrentSound() {
@@ -55,9 +54,7 @@ void stopCurrentSound() {
 
 void playLoopingSound(Mix_Chunk* sound) {
     stopCurrentSound();
-    if (sound) {
-        currentSoundChannel = Mix_PlayChannel(-1, sound, -1);
-    }
+    if (sound) currentSoundChannel = Mix_PlayChannel(-1, sound, -1);
 }
 
 void loadSounds() {
@@ -66,10 +63,7 @@ void loadSounds() {
     jumpSound = Mix_LoadWAV("sounds/jump_sound.wav");
     loseSound = Mix_LoadWAV("sounds/lose_sound.wav");
     clickSound = Mix_LoadWAV("sounds/click_sound.wav");
-
-    if (!menuSound || !gameSound || !jumpSound || !loseSound || !clickSound) {
-        std::cerr << "Failed to load some audio files! Mix Error: " << Mix_GetError() << std::endl;
-    }
+    adjustVolume(0); // Khởi tạo âm lượng mặc định
 }
 
 void freeSounds() {
@@ -86,14 +80,9 @@ void freeSounds() {
     clickSound = nullptr;
 }
 
-// Font functions
 bool loadFont() {
     font = TTF_OpenFont("VCOOPERB.ttf", 30);
-    if (!font) {
-        std::cerr << "Failed to load font! SDL_ttf Error: " << TTF_GetError() << std::endl;
-        return false;
-    }
-    return true;
+    return font != nullptr;
 }
 
 void freeFont() {
@@ -105,48 +94,92 @@ void freeFont() {
 
 SDL_Texture* renderText(const std::string& text, SDL_Renderer* renderer, TTF_Font* font, SDL_Color color) {
     SDL_Surface* textSurface = TTF_RenderText_Blended(font, text.c_str(), color);
-    if (!textSurface) {
-        std::cerr << "Unable to render text surface! SDL_ttf Error: " << TTF_GetError() << std::endl;
-        return nullptr;
-    }
+    if (!textSurface) return nullptr;
 
     SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
     SDL_FreeSurface(textSurface);
-
     return textTexture;
 }
 
-// Button functions
 bool loadTextures() {
+    mainScreenTexture = LoadTexture("imgs/Background/MainScreen.png", renderer);
+    instructionTexture = LoadTexture("imgs/Background/Introduction.png", renderer);
     pauseButtonTexture = LoadTexture("imgs/Buttons/Pause.png", renderer);
-    continueButtonTexture = LoadTexture("imgs/Buttons/ContinueButton.png", renderer);
-    replayButtonTexture = LoadTexture("imgs/Buttons/ReplayButton.png", renderer);
-    exitButtonTexture = LoadTexture("imgs/Buttons/ExitButton.png", renderer);
-    homeButtonTexture = LoadTexture("imgs/Buttons/HomeButton.jpg", renderer);
-    pauseHomeButtonTexture = LoadTexture("imgs/Buttons/HomeButton.jpg", renderer);
-    gameOverImage = LoadTexture("imgs/Buttons/GameOver.png", renderer);
-    mainScreenTexture = LoadTexture("imgs/Background/mainWindow.png", renderer);
-    playButtonTexture = LoadTexture("imgs/Buttons/PlayButton.png", renderer);
+    pauseScreenTexture = LoadTexture("imgs/Background/PauseScreen.png", renderer);
+    gameOverTexture = LoadTexture("imgs/Buttons/GameOver.png", renderer);
+    endScreenTexture = LoadTexture("imgs/Background/EndScreen.png", renderer);
+    settingsTexture = LoadTexture("imgs/Background/Setting.png", renderer); // Tải texture Settings
 
-    if (!pauseButtonTexture || !continueButtonTexture || !replayButtonTexture ||
-        !exitButtonTexture || !homeButtonTexture || !pauseHomeButtonTexture ||
-        !gameOverImage || !mainScreenTexture || !playButtonTexture) {
-        std::cerr << "Failed to load some textures!" << std::endl;
-        return false;
-    }
-    return true;
+    return mainScreenTexture && instructionTexture && pauseButtonTexture &&
+           pauseScreenTexture && gameOverTexture && endScreenTexture && settingsTexture;
 }
 
 void freeTextures() {
-    if (pauseButtonTexture) SDL_DestroyTexture(pauseButtonTexture);
-    if (continueButtonTexture) SDL_DestroyTexture(continueButtonTexture);
-    if (replayButtonTexture) SDL_DestroyTexture(replayButtonTexture);
-    if (exitButtonTexture) SDL_DestroyTexture(exitButtonTexture);
-    if (homeButtonTexture) SDL_DestroyTexture(homeButtonTexture);
-    if (pauseHomeButtonTexture) SDL_DestroyTexture(pauseHomeButtonTexture);
-    if (gameOverImage) SDL_DestroyTexture(gameOverImage);
     if (mainScreenTexture) SDL_DestroyTexture(mainScreenTexture);
-    if (playButtonTexture) SDL_DestroyTexture(playButtonTexture);
+    if (instructionTexture) SDL_DestroyTexture(instructionTexture);
+    if (pauseButtonTexture) SDL_DestroyTexture(pauseButtonTexture);
+    if (pauseScreenTexture) SDL_DestroyTexture(pauseScreenTexture);
+    if (gameOverTexture) SDL_DestroyTexture(gameOverTexture);
+    if (endScreenTexture) SDL_DestroyTexture(endScreenTexture);
+    if (settingsTexture) SDL_DestroyTexture(settingsTexture); // Giải phóng texture Settings
+
+    mainScreenTexture = nullptr;
+    instructionTexture = nullptr;
+    pauseButtonTexture = nullptr;
+    pauseScreenTexture = nullptr;
+    gameOverTexture = nullptr;
+    endScreenTexture = nullptr;
+    settingsTexture = nullptr;
+}
+
+void renderHelpScreen(SDL_Renderer* renderer) {
+    if (instructionTexture) {
+        SDL_RenderCopy(renderer, instructionTexture, nullptr, nullptr);
+    }
+}
+
+void renderMainScreen(SDL_Renderer* renderer) {
+    if (mainScreenTexture) {
+        SDL_RenderCopy(renderer, mainScreenTexture, nullptr, nullptr);
+    }
+}
+
+void renderPauseScreen(SDL_Renderer* renderer) {
+    if (pauseScreenTexture) {
+        const int PAUSE_WIDTH = 400;
+        const int PAUSE_HEIGHT = 240;
+        SDL_Rect destRect = {(SCREEN_WIDTH - PAUSE_WIDTH) / 2, (SCREEN_HEIGHT - PAUSE_HEIGHT) / 2, PAUSE_WIDTH, PAUSE_HEIGHT};
+        SDL_RenderCopy(renderer, pauseScreenTexture, nullptr, &destRect);
+    }
+}
+
+void renderSettingsScreen(SDL_Renderer* renderer) {
+    if (settingsTexture) {
+        SDL_Rect settingsRect = {(SCREEN_WIDTH - 1000) / 2, (SCREEN_HEIGHT - 600) / 2, 1000, 600};
+        SDL_RenderCopy(renderer, settingsTexture, nullptr, &settingsRect);
+
+        // Vẽ thanh âm lượng
+        SDL_Rect volumeBar = {300, 318, 400, 50}; // Thanh trắng nền
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+        SDL_RenderFillRect(renderer, &volumeBar);
+
+        // Vẽ phần màu đen biểu thị âm lượng (tỷ lệ với 400px)
+        SDL_Rect filledVolume = {300, 318, (volume * 400) / 100, 50};
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+        SDL_RenderFillRect(renderer, &filledVolume);
+    }
+}
+
+void adjustVolume(int change) {
+    volume += change;
+    if (volume < 0) volume = 0;
+    if (volume > 100) volume = 100;
+    Mix_Volume(-1, (volume * MIX_MAX_VOLUME) / 100); // Áp dụng âm lượng cho tất cả các kênh
+    Mix_VolumeChunk(menuSound, (volume * MIX_MAX_VOLUME) / 100);
+    Mix_VolumeChunk(gameSound, (volume * MIX_MAX_VOLUME) / 100);
+    Mix_VolumeChunk(jumpSound, (volume * MIX_MAX_VOLUME) / 100);
+    Mix_VolumeChunk(loseSound, (volume * MIX_MAX_VOLUME) / 100);
+    Mix_VolumeChunk(clickSound, (volume * MIX_MAX_VOLUME) / 100);
 }
 
 void renderInGameScores(SDL_Renderer* renderer, int score, int highScore) {
@@ -170,59 +203,44 @@ void renderInGameScores(SDL_Renderer* renderer, int score, int highScore) {
 }
 
 void renderGameOverScreen(SDL_Renderer* renderer, int score, int highScore) {
+    // Vẽ overlay đen mờ
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 200);
     SDL_Rect overlay = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
     SDL_RenderFillRect(renderer, &overlay);
 
-    if (gameOverImage) {
-        SDL_RenderCopy(renderer, gameOverImage, nullptr, &gameOverRect);
+    // Vẽ ảnh GameOver
+    if (gameOverTexture) {
+        SDL_RenderCopy(renderer, gameOverTexture, nullptr, &gameOverRect);
     }
 
+    // Vẽ text score
     std::string scoreText = "Your Score: " + std::to_string(score);
     SDL_Texture* scoreTextTexture = renderText(scoreText, renderer, font, goldColor);
     if (scoreTextTexture) {
-        SDL_Rect scoreRect = {0, SCREEN_HEIGHT/2 - 50, 0, 0};
+        SDL_Rect scoreRect;
         SDL_QueryTexture(scoreTextTexture, nullptr, nullptr, &scoreRect.w, &scoreRect.h);
         scoreRect.x = SCREEN_WIDTH/2 - scoreRect.w/2;
+        scoreRect.y = SCREEN_HEIGHT/2 - 50;
         SDL_RenderCopy(renderer, scoreTextTexture, nullptr, &scoreRect);
         SDL_DestroyTexture(scoreTextTexture);
     }
 
+    // Vẽ text high score
     std::string highScoreText = "Highest Score: " + std::to_string(highScore);
     SDL_Texture* highScoreTexture = renderText(highScoreText, renderer, font, goldColor);
     if (highScoreTexture) {
-        SDL_Rect highScoreRect = {0, SCREEN_HEIGHT/2, 0, 0};
+        SDL_Rect highScoreRect;
         SDL_QueryTexture(highScoreTexture, nullptr, nullptr, &highScoreRect.w, &highScoreRect.h);
         highScoreRect.x = SCREEN_WIDTH/2 - highScoreRect.w/2;
+        highScoreRect.y = SCREEN_HEIGHT/2;
         SDL_RenderCopy(renderer, highScoreTexture, nullptr, &highScoreRect);
         SDL_DestroyTexture(highScoreTexture);
     }
 
-    SDL_RenderCopy(renderer, replayButtonTexture, nullptr, &replayButtonRect);
-    SDL_RenderCopy(renderer, exitButtonTexture, nullptr, &exitButtonRect);
-    SDL_RenderCopy(renderer, homeButtonTexture, nullptr, &homeButtonRect);
-}
-
-void renderPauseScreen(SDL_Renderer* renderer) {
-    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 128);
-    SDL_Rect overlay = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-    SDL_RenderFillRect(renderer, &overlay);
-
-    if (continueButtonTexture) {
-        SDL_RenderCopy(renderer, continueButtonTexture, nullptr, &continueButtonRect);
-    }
-    if (pauseHomeButtonTexture) {
-        SDL_RenderCopy(renderer, pauseHomeButtonTexture, nullptr, &pauseHomeButtonRect);
+    // Vẽ end screen với các nút
+    if (endScreenTexture) {
+        SDL_RenderCopy(renderer, endScreenTexture, nullptr, &endScreenRect);
     }
 }
 
-void renderMainScreen(SDL_Renderer* renderer) {
-    if (mainScreenTexture) {
-        SDL_RenderCopy(renderer, mainScreenTexture, nullptr, nullptr);
-    }
-    if (playButtonTexture) {
-        SDL_RenderCopy(renderer, playButtonTexture, nullptr, &playButtonRect);
-    }
-}

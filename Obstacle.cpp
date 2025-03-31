@@ -14,7 +14,7 @@ SDL_Texture* Cactus;
 SDL_Texture* Bird;
 const int COLLISION_MARGIN = 25;
 const int COLLISION_MARGIN_2 = 20;
-const int MIN_DISTANCE = 200;
+const int MIN_DISTANCE = 300;
 const int MAX_DISTANCE = 1500;
 const int BIRD_WIDTH = 183;
 const int BIRD_HEIGHT = 168;
